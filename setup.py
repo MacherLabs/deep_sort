@@ -15,6 +15,6 @@ setup(
 
     packages=['deep_sort', 'deep_sort.deep_sort', 'deep_sort.application_util'],
 
-    install_requires=['numpy', 'sklearn'],
+    install_requires=['numpy'],
     zip_safe=False
     )
