@@ -316,7 +316,7 @@ def _create_image_encoder(preprocess_fn, factory_fn, image_shape, batch_size=32,
 
     if session is None:
         config = tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True))
-        config.gpu_options.per_process_gpu_memory_fraction = 0.25
+        config.gpu_options.per_process_gpu_memory_fraction = 0.15
         session = tf.Session(config=config)
     if checkpoint_path is not None:
         slim.get_or_create_global_step()
