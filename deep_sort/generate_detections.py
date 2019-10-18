@@ -300,7 +300,7 @@ def extract_image_patch(image, bbox, patch_shape):
     return image
 
 
-def _create_image_encoder(preprocess_fn, factory_fn, image_shape, batch_size=32,
+def _create_image_encoder(preprocess_fn, factory_fn, image_shape, gpu_config, batch_size=32,
                          session=None, checkpoint_path=None,
                          loss_mode="cosine"):
     image_var = tf.placeholder(tf.uint8, (None, ) + image_shape)
@@ -316,7 +316,7 @@ def _create_image_encoder(preprocess_fn, factory_fn, image_shape, batch_size=32,
 
     if session is None:
         config = tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True))
-        config.gpu_options.per_process_gpu_memory_fraction = 0.02
+        config.gpu_options.per_process_gpu_memory_fraction = gpu_config
         session = tf.Session(config=config)
     if checkpoint_path is not None:
         slim.get_or_create_global_step()
@@ -334,20 +334,20 @@ def _create_image_encoder(preprocess_fn, factory_fn, image_shape, batch_size=32,
     return encoder
 
 
-def create_image_encoder(model_filename, batch_size=32, loss_mode="cosine",
+def create_image_encoder(model_filename, gpu_config, batch_size=32, loss_mode="cosine",
                          session=None):
     image_shape = 128, 64, 3
     factory_fn = _network_factory(
         num_classes=1501, is_training=False, weight_decay=1e-8)
 
     return _create_image_encoder(
-        _preprocess, factory_fn, image_shape, batch_size, session,
+        _preprocess, factory_fn, image_shape, gpu_config, batch_size, session,
         model_filename, loss_mode)
 
 
-def create_box_encoder(model_filename, batch_size=32, loss_mode="cosine"):
+def create_box_encoder(model_filename, batch_size=32, loss_mode="cosine", gpu_config = 0.02):
     image_shape = 128, 64, 3
-    image_encoder = create_image_encoder(model_filename, batch_size, loss_mode)
+    image_encoder = create_image_encoder(model_filename, gpu_config, batch_size, loss_mode)
 
     def encoder(image, boxes):
         image_patches = []
