@@ -315,7 +315,7 @@ def _create_image_encoder(preprocess_fn, factory_fn, image_shape, gpu_config, ba
     feature_dim = feature_var.get_shape().as_list()[-1]
 
     if session is None:
-        config = tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=False))
+        config = tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True))
         config.gpu_options.per_process_gpu_memory_fraction = gpu_config
         session = tf.Session(config=config)
     if checkpoint_path is not None:
